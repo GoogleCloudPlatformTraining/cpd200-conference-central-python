@@ -42,7 +42,7 @@ func root(w http.ResponseWriter, r *http.Request) {
         // a slight chance that Greeting that had just been written would not
         // show up in a query.
         // [START query]
-        q := datastore.NewQuery("Announcement").Ancestor(announcementKey(c)).Order("-Date").Limit(10)
+        q := datastore.NewQuery("Announcement")
         // [END query]
         // [START getall]
         announcements := make([]Announcement, 0, 10)
