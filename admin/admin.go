@@ -43,6 +43,7 @@ func root(w http.ResponseWriter, r *http.Request) {
         // show up in a query.
         // [START query]
         q := datastore.NewQuery("Announcement")
+        // q := datastore.NewQuery("Announcement").Ancestor(announcementKey(c)).Order("-Date").Limit(10)
         // [END query]
         // [START getall]
         announcements := make([]Announcement, 0, 10)
