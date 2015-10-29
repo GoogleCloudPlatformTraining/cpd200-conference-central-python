@@ -1,5 +1,5 @@
 application: your-project-id
-version: 1
+version: alpha-001
 runtime: python27
 api_version: 1
 threadsafe: yes
