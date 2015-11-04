@@ -64,7 +64,6 @@ class ConferenceApi(remote.Service):
         profile = None
         if not profile:
             profile = Profile(
-                userId = None,
                 key = None,
                 displayName = "Test", 
                 mainEmail= None,
