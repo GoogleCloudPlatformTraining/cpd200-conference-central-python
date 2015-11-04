@@ -1,2 +1,2 @@
 # cpd200-conference-central-python
-Basic foundation for the Conference Central application.
+Used in the CPD200 course - Basic foundation for the Conference Central application.

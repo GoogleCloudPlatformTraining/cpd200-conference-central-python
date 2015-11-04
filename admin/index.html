@@ -32,12 +32,12 @@
       </header>
       <main class="mdl-layout__content">
         <div class="page-content">
-          <form action="/announce" method="post">
+          <form action="/alert" method="post">
           <div class="mdl-textfield mdl-js-textfield">
               <textarea class="mdl-textfield__input" name="content" rows="3" cols="60"></textarea>
-              <label class="mdl-textfield__label" for="sample5">Add an announcement...</label>
+              <label class="mdl-textfield__label" for="sample5">Add an alert...</label>
           </div>
-          <div><input type="submit" value="Post announcement" class="mdl-button"></div>
+          <div><input type="submit" value="Post alert" class="mdl-button"></div>
           </form>
           {{range .}}
           <div class="mdl-card mdl-shadow--2dp">

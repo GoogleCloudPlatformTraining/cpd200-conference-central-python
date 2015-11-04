@@ -8,9 +8,6 @@ conference.py -- server-side Python App Engine API;
 
 
 from datetime import datetime
-import json
-import os
-import time
 
 import endpoints
 from protorpc import messages

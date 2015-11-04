@@ -14,23 +14,23 @@ import (
         "appengine/user"
 )
 
-// [START announcement_struct]
-type Announcement struct {
+// [START alert_struct]
+type Alert struct {
         Author  string
         Content string
         Date    time.Time
 }
-// [END announcement_struct]
+// [END alert_struct]
 
 func init() {
         http.HandleFunc("/", root)
-        http.HandleFunc("/announce", announce)
+        http.HandleFunc("/add", add)
 }
 
-// announcementKey returns the key used for all announcement entries.
-func announcementKey(c appengine.Context) *datastore.Key {
+// alertKey returns the key used for all alert entries.
+func alertKey(c appengine.Context) *datastore.Key {
         // The string "default_feed" here could be varied to have multiple feeds.
-        return datastore.NewKey(c, "Announcement", "default_feed", 0, nil)
+        return datastore.NewKey(c, "Alert", "default_feed", 0, nil)
 }
 
 // [START func_root]
@@ -42,17 +42,17 @@ func root(w http.ResponseWriter, r *http.Request) {
         // a slight chance that Greeting that had just been written would not
         // show up in a query.
         // [START query]
-        q := datastore.NewQuery("Announcement")
-        // q := datastore.NewQuery("Announcement").Ancestor(announcementKey(c)).Order("-Date").Limit(10)
+        q := datastore.NewQuery("Alert")
+        // q := datastore.NewQuery("Alert").Ancestor(alertKey(c)).Order("-Date").Limit(10)
         // [END query]
         // [START getall]
-        announcements := make([]Announcement, 0, 10)
-        if _, err := q.GetAll(c, &announcements); err != nil {
+        alerts := make([]Alert, 0, 10)
+        if _, err := q.GetAll(c, &alerts); err != nil {
                 http.Error(w, err.Error(), http.StatusInternalServerError)
                 return
         }
         // [END getall]
-        if err := feedTemplate.Execute(w, announcements); err != nil {
+        if err := feedTemplate.Execute(w, alerts); err != nil {
                 http.Error(w, err.Error(), http.StatusInternalServerError)
         }
 }
@@ -60,21 +60,21 @@ func root(w http.ResponseWriter, r *http.Request) {
 
 var feedTemplate = template.Must(template.ParseFiles("index.html"))
 
-// [START func_announce]
-func announce(w http.ResponseWriter, r *http.Request) {
+// [START func_alert]
+func add(w http.ResponseWriter, r *http.Request) {
         c := appengine.NewContext(r)
-        a := Announcement{
+        a := Alert{
                 Content: r.FormValue("content"),
                 Date:    time.Now(),
         }
         if u := user.Current(c); u != nil {
                 a.Author = u.String()
         }
-        // We set the same parent key on every Announcement entity to ensure each 
-        // Announcement is in the same entity group. Queries across the single entity 
+        // We set the same parent key on every Alert entity to ensure each 
+        // Alert is in the same entity group. Queries across the single entity 
         // group will be consistent. However, the write rate to a single entity group
         // should be limited to ~1/second.
-        key := datastore.NewIncompleteKey(c, "Announcement", announcementKey(c))
+        key := datastore.NewIncompleteKey(c, "Alert", alertKey(c))
         _, err := datastore.Put(c, key, &a)
         if err != nil {
                 http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -82,4 +82,4 @@ func announce(w http.ResponseWriter, r *http.Request) {
         }
         http.Redirect(w, r, "/", http.StatusFound)
 }
-// [END func_announce]
+// [END func_alert]
