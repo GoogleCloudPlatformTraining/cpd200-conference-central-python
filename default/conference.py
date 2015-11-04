@@ -65,7 +65,7 @@ class ConferenceApi(remote.Service):
         if not profile:
             profile = Profile(
                 key = None,
-                displayName = "Test", 
+                displayName = "Test",
                 mainEmail= None,
                 teeShirtSize = str(TeeShirtSize.NOT_SPECIFIED),
             )
@@ -105,4 +105,4 @@ class ConferenceApi(remote.Service):
 
 
 # registers API
-api = endpoints.api_server([ConferenceApi]) 
+api = endpoints.api_server([ConferenceApi])
