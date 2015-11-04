@@ -16,9 +16,9 @@ import (
 
 // [START alert_struct]
 type Alert struct {
-        Author  string
-        Content string
-        Date    time.Time
+        Author  string `datastore:"author"`
+        Content string `datastore:"content"`
+        Date    time.Time `datastore:"date"`
 }
 // [END alert_struct]
 
