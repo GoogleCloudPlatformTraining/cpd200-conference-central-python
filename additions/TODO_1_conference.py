@@ -1,3 +1,5 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 DEFAULTS = {
     "city": "Default City",
     "maxAttendees": 0,
