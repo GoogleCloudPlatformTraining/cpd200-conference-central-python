@@ -69,6 +69,7 @@ class ConferenceApi(remote.Service):
                 mainEmail= None,
                 teeShirtSize = str(TeeShirtSize.NOT_SPECIFIED),
             )
+            #TODO
 
         return profile      # return Profile
 
@@ -85,6 +86,7 @@ class ConferenceApi(remote.Service):
                     val = getattr(save_request, field)
                     if val:
                         setattr(prof, field, str(val))
+                        #TODO
 
         # return ProfileForm
         return self._copyProfileToForm(prof)

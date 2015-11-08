@@ -1,61 +1,63 @@
-CONF_GET_REQUEST = endpoints.ResourceContainer(
-    message_types.VoidMessage,
-    websafeConferenceKey=messages.StringField(1),
-)
+OPERATORS = {
+            'EQ':   '=',
+            'GT':   '>',
+            'GTEQ': '>=',
+            'LT':   '<',
+            'LTEQ': '<=',
+            'NE':   '!='
+            }
 
-# - - - Registration - - - - - - - - - - - - - - - - - - - -
+FIELDS =    {
+            'CITY': 'city',
+            'TOPIC': 'topics',
+            'MONTH': 'month',
+            'MAX_ATTENDEES': 'maxAttendees',
+            }
 
-    def _conferenceRegistration(self, request, reg=True):
-        """Register or unregister user for selected conference."""
-        retval = None
-        prof = self._getProfileFromUser() # get user Profile
 
-        # check if conf exists given websafeConfKey
-        # get conference; check that it exists
-        wsck = request.websafeConferenceKey
-        conf = ndb.Key(urlsafe=wsck).get()
-        if not conf:
-            raise endpoints.NotFoundException(
-                'No conference found with key: %s' % wsck)
+    def _getQuery(self, request):
+        """Return formatted query from the submitted filters."""
+        q = Conference.query()
+        inequality_filter, filters = self._formatFilters(request.filters)
 
-        # register
-        if reg:
-            # check if user already registered otherwise add
-            if wsck in prof.conferenceKeysToAttend:
-                raise ConflictException(
-                    "You have already registered for this conference")
-
-            # check if seats avail
-            if conf.seatsAvailable <= 0:
-                raise ConflictException(
-                    "There are no seats available.")
-
-            # register user, take away one seat
-            prof.conferenceKeysToAttend.append(wsck)
-            conf.seatsAvailable -= 1
-            retval = True
-
-        # unregister
+        # If exists, sort on inequality filter first
+        if not inequality_filter:
+            q = q.order(Conference.name)
         else:
-            # check if user already registered
-            if wsck in prof.conferenceKeysToAttend:
+            q = q.order(ndb.GenericProperty(inequality_filter))
+            q = q.order(Conference.name)
 
-                # unregister user, add back one seat
-                prof.conferenceKeysToAttend.remove(wsck)
-                conf.seatsAvailable += 1
-                retval = True
-            else:
-                retval = False
-
-        # write things back to the datastore & return
-        prof.put()
-        conf.put()
-        return BooleanMessage(data=retval)
+        for filtr in filters:
+            if filtr["field"] in ["month", "maxAttendees"]:
+                filtr["value"] = int(filtr["value"])
+            formatted_query = ndb.query.FilterNode(filtr["field"], filtr["operator"], filtr["value"])
+            q = q.filter(formatted_query)
+        return q
 
 
-    @endpoints.method(CONF_GET_REQUEST, BooleanMessage,
-            path='conference/{websafeConferenceKey}',
-            http_method='POST', name='registerForConference')
-    def registerForConference(self, request):
-        """Register user for selected conference."""
-        return self._conferenceRegistration(request)
+    def _formatFilters(self, filters):
+        """Parse, check validity and format user supplied filters."""
+        formatted_filters = []
+        inequality_field = None
+
+        for f in filters:
+            filtr = {field.name: getattr(f, field.name) for field in f.all_fields()}
+
+            try:
+                filtr["field"] = FIELDS[filtr["field"]]
+                filtr["operator"] = OPERATORS[filtr["operator"]]
+            except KeyError:
+                raise endpoints.BadRequestException("Filter contains invalid field or operator.")
+
+            # Every operation except "=" is an inequality
+            if filtr["operator"] != "=":
+                # check if inequality operation has been used in previous filters
+                # disallow the filter if inequality was performed on a different field before
+                # track the field on which the inequality operation is performed
+                if inequality_field and inequality_field != filtr["field"]:
+                    raise endpoints.BadRequestException("Inequality filter is allowed on only one field.")
+                else:
+                    inequality_field = filtr["field"]
+
+            formatted_filters.append(filtr)
+        return (inequality_field, formatted_filters)
