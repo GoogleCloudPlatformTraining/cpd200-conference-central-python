@@ -85,3 +85,5 @@ DEFAULTS = {
     def createConference(self, request):
         """Create new conference."""
         return self._createConferenceObject(request)
+
+

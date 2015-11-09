@@ -1,21 +1,25 @@
     @endpoints.method(message_types.VoidMessage, ConferenceForms,
-            path='getConferencesCreated',
-            http_method='POST', name='getConferencesCreated')
-    def getConferencesCreated(self, request):
-        """Return conferences created by user."""
-        # make sure user is authed
-        user = endpoints.get_current_user()
-        if not user:
-            raise endpoints.UnauthorizedException('Authorization required')
+            path='filterPlayground',
+            http_method='GET', name='filterPlayground')
+    def filterPlayground(self, request):
+        q = Conference.query()
+        # simple filter usage:
+        # q = q.filter(Conference.city == "Paris")
 
-        # make profile key
-        p_key = ndb.Key(Profile, getUserId(user))
-        # create ancestor query for this user
-        conferences = Conference.query(ancestor=p_key)
-        # get the user profile and display name
-        prof = p_key.get()
-        displayName = getattr(prof, 'displayName')
-        # return set of ConferenceForm objects per Conference
+        # advanced filter building and usage
+        # field = "city"
+        # operator = "="
+        # value = "London"
+        # f = ndb.query.FilterNode(field, operator, value)
+        # q = q.filter(f)
+
+        # TODO
+        # add 2 filters:
+        # 1: city equals to London
+        # 2: topic equals "Medical Innovations"
+
         return ConferenceForms(
-            items=[self._copyConferenceToForm(conf, displayName) for conf in conferences]
+            items=[self._copyConferenceToForm(conf, "") for conf in q]
         )
+
+
