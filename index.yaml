@@ -1,6 +1,1 @@
 indexes:
-- kind: Announcement
-  ancestor: yes
-  properties:
-  - name: Date
-    direction: desc
