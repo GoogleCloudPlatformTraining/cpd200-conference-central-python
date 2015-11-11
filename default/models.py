@@ -99,3 +99,12 @@ class ConferenceQueryForm(messages.Message):
 class ConferenceQueryForms(messages.Message):
     """ConferenceQueryForms -- multiple ConferenceQueryForm inbound form message"""
     filters = messages.MessageField(ConferenceQueryForm, 1, repeated=True)
+
+class Alert(ndb.Model):
+    """Alert -- Alert object"""
+    content = ndb.StringProperty()
+    date = ndb.DateProperty()
+
+class LatestAlert(messages.Message):
+    """LatestAlert -- Latest alert message"""
+    content = messages.StringField(1)
