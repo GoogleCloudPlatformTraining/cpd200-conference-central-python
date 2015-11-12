@@ -15,7 +15,7 @@
 
         # TODO
         # add 2 filters:
-        # 1: city equals to London
+        # 1: city equals to Chicago
         # 2: topic equals "Medical Innovations"
 
         return ConferenceForms(
