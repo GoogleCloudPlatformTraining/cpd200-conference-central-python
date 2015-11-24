@@ -16,6 +16,7 @@ from protorpc import message_types
 from protorpc import remote
 
 from google.appengine.api import memcache
+from google.appengine.api import taskqueue
 from google.appengine.ext import ndb
 
 from models import ConflictException
@@ -144,8 +145,13 @@ class ConferenceApi(remote.Service):
         data['key'] = c_key
         data['organizerUserId'] = request.organizerUserId = user_id
 
-        # create Conference & return (modified) ConferenceForm
+        # create Conference, send email to organizer confirming
+        # creation of Conference & return (modified) ConferenceForm
         Conference(**data).put()
+        taskqueue.add(params={'email': user.email(),
+            'conferenceInfo': repr(request)},
+            url='/tasks/send_confirmation_email'
+        )
 
         return request
 
