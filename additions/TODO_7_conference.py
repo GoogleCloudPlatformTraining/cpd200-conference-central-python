@@ -1,6 +1,4 @@
 MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
-ANNOUNCEMENT_TPL = ('Last chance to attend! The following conferences '
-                    'are nearly sold out: %s')
 
 # - - - Announcements - - - - - - - - - - - - - - - - - - - -
 
