@@ -152,7 +152,6 @@ class ConferenceApi(remote.Service):
             'conferenceInfo': repr(request)},
             url='/tasks/send_confirmation_email'
         )
-
         return request
 
 
