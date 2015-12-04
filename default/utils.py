@@ -24,7 +24,7 @@ def getUserId(user, id_type="email"):
         user = {}
         wait = 1
         for i in range(3):
-            resp = urlfetch.fetch(url)
+            resp = urlfetch.fetch(url, validate_certificate=True)
             if resp.status_code == 200:
                 user = json.loads(resp.content)
                 break
