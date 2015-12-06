@@ -8,6 +8,10 @@ from conference import ConferenceApi
 class SetAnnouncementHandler(webapp2.RequestHandler):
     def get(self):
         """Set Announcement in Memcache."""
+        header = self.request.headers.get('X-AppEngine-Cron', None)
+        if not header:
+            raise ValueError('attempt to access cron handler directly, '
+                             'missing custom App Engine header')
         ConferenceApi._cacheAnnouncement()
         self.response.set_status(204)
 
@@ -15,6 +19,10 @@ class SetAnnouncementHandler(webapp2.RequestHandler):
 class SendConfirmationEmailHandler(webapp2.RequestHandler):
     def post(self):
         """Send email confirming Conference creation."""
+        header = self.request.headers.get('X-AppEngine-QueueName', None)
+        if not header:
+            raise ValueError('attempt to access task handler directly, '
+                             'missing custom App Engine header')
         mail.send_mail(
             'noreply@%s.appspotmail.com' % (
                 app_identity.get_application_id()),     # from
