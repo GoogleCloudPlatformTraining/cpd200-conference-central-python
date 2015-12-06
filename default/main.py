@@ -12,7 +12,6 @@ class SetAnnouncementHandler(webapp2.RequestHandler):
         if not header:
             raise ValueError('attempt to access cron handler directly, '
                              'missing custom App Engine header')
-        """Set Announcement in Memcache."""
         # TODO 1
         # use _cacheAnnouncement() to set announcement in Memcache
 
