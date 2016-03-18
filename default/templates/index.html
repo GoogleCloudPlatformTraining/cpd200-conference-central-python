@@ -27,10 +27,9 @@
          * so that Google JavaScript library ready in the angular modules.
          */
         function init() {
-            gapi.client.load('conference', 'v1', null, '//' + window.location.host + '/_ah/api');
-            gapi.client.load('oauth2', 'v2', function () {
+            gapi.client.load('conference', 'v1', function () {
                 angular.bootstrap(document, ['conferenceApp']);
-            });
+            }, '//' + window.location.host + '/_ah/api');
         };
     </script>
     <script src="//apis.google.com/js/client:plusone.js?onload=init"></script>
