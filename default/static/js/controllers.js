@@ -717,13 +717,15 @@ conferenceApp.controllers.controller('RootCtrl', function ($scope, $location, oa
      */
     $scope.signIn = function () {
         oauth2Provider.signIn(function () {
-            gapi.client.oauth2.userinfo.get().execute(function (resp) {
-                $scope.$apply(function () {
-                    if (resp.email) {
-                        oauth2Provider.signedIn = true;
-                        $scope.alertStatus = 'success';
-                        $scope.rootMessages = 'Logged in with ' + resp.email;
-                    }
+            gapi.client.load('oauth2', 'v2', function(){
+                gapi.client.oauth2.userinfo.get().execute(function (resp) {
+                    $scope.$apply(function () {
+                        if (resp.email) {
+                            oauth2Provider.signedIn = true;
+                            $scope.alertStatus = 'success';
+                            $scope.rootMessages = 'Logged in with ' + resp.email;
+                        }
+                    });
                 });
             });
         });
@@ -781,15 +783,17 @@ conferenceApp.controllers.controller('OAuth2LoginModalCtrl',
     function ($scope, $modalInstance, $rootScope, oauth2Provider) {
         $scope.singInViaModal = function () {
             oauth2Provider.signIn(function () {
-                gapi.client.oauth2.userinfo.get().execute(function (resp) {
-                    $scope.$root.$apply(function () {
-                        oauth2Provider.signedIn = true;
-                        $scope.$root.alertStatus = 'success';
-                        $scope.$root.rootMessages = 'Logged in with ' + resp.email;
-                    });
+                gapi.client.load('oauth2', 'v2', function(){
+                    gapi.client.oauth2.userinfo.get().execute(function (resp) {
+                        $scope.$root.$apply(function () {
+                            oauth2Provider.signedIn = true;
+                            $scope.$root.alertStatus = 'success';
+                            $scope.$root.rootMessages = 'Logged in with ' + resp.email;
+                        });
 
-                    $modalInstance.close();
-                });
+                        $modalInstance.close();
+                    });
+                 });
             });
         };
     });
